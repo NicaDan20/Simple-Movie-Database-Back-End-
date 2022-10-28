@@ -1,0 +1,55 @@
+
+<div class="form-row">
+    <div class="col-5">
+        <label for="movieTitle">Director Name</label>
+        <input type="text" class="form-control" placeholder="Name" id="name" name="name" value="<%= director.name %>">
+    </div>
+    <div class="col">
+        <label class="control-label" for="date">Birth Date</label>
+        <input class="form-control" id="birth_date" name="birth_date" placeholder="MM/DD/YYY" type="text" value="<%= director.birth_date %>"/>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <label for="description">Bio</label>
+        <textarea class="form-control" id="bio" name="bio" rows="4"><%= director.bio %></textarea>
+    </div>
+</div>
+
+<br>
+<label for="description">Director Image</label>
+
+<div class="row">
+    <div class="col">
+        <input id="img" name="img" type="file" class="file" data-browse-on-zone-click="true">
+    </div>
+</div>
+
+<br>
+<div class="row">
+    <button type="submit" class="btn btn-success">Add</button>
+    <a href="/admin" class="btn btn-danger">Cancel</a>
+</div>
+
+
+<!-- Include jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<!-- Include Date Range Picker -->
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+
+<script>
+    $(document).ready(function () {
+        var date_input = $('input[name="birth_date"]');
+        var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+        date_input.datepicker({
+            format: 'mm/dd/yyyy',
+            container: container,
+            todayHighlight: true,
+            autoclose: true,
+        })
+    })
+</script>

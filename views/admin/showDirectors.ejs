@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md">
+                <h1 class="mb-3">Show Directors</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Director
+        </div>
+        <div class="col">
+            Date of Birth
+        </div>
+        <div class="col">
+            Buttons
+        </div>
+    </div>
+    <% directors.forEach(director => { %>
+        <div class="row">
+            <div class="col">
+                <%= director.name %>
+            </div>
+            <div class="col">
+                <%= director.birth_date %>
+            </div>
+            <div class="col">
+                <a href="/admin/editDirector/<%=director.uuid%>" class="btn btn-primary">Edit Director</a>
+                <form method="POST" action="/admin/deleteDirector/<%= director.uuid %>?_method=DELETE">
+                    <button type="submit" class="btn btn-danger">Delete Director</button>
+                </form>
+            </div>
+        </div>
+        <% }) %>
+
+</body>
