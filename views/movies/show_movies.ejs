@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+	
+</head>
+<body>
+	
+
+<div class="container mt-5">
+	<h2 class="text-center">Movie List</h2>
+
+        <% movies.forEach(movie => { %>
+            <div class="card movie_card">
+                <img src="<%= movie.path_to_cover %>" width=250 height=250 alt="...">
+                <div class="card-body">
+                    <i class="fas fa-play play_button" data-toggle="tooltip" data-placement="bottom" title="Play Trailer">
+                    </i>
+                  <a href="movies/title/<%= movie.slug %>"><h5 class="card-title"><%= movie.title %></h5></a>
+                      <span class="movie_info">Directed by: <%= movie.director.name %> </span>
+                      <br>
+                      <span class="movie_info"><i> <%= movie.description %> </i></span>
+                      <br>
+                      <br>
+                         <span class="movie_info">Release Date: <%=movie.release_date %> </span>
+                         <span class="movie_info float-right"><i class="fas fa-star"></i> 9 / 10</span>
+                </div>
+              </div>      
+        <% }) %>
+		
+	</div>
+
+</div>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+	<script>
+		$(function () {
+  		$('[data-toggle="tooltip"]').tooltip()
+	})
+	</script>
+</body>
+</html>

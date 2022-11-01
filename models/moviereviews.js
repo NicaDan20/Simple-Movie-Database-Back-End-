@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({Movie, UserProfile}) {
+      this.belongsTo(Movie, {foreignKey: 'movieId', as:'movie_reviews'})
+      this.belongsTo(UserProfile, {foreignKey: 'userId', as:'user_reviews'})
     }
   }
   MovieReviews.init({
@@ -17,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
-    review_text: {
+    review_body: {
       type: DataTypes.TEXT,
       allowNull: true
     },

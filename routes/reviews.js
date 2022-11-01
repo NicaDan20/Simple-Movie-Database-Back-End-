@@ -1,22 +1,34 @@
 const express = require('express')
 const router = express()
 
-const {MovieReviews} = require('../models')
-const {ReviewsUsers} = require('../models')
+const {MovieReviews, Movie} = require('../models')
 
 router.get('/', (req, res) => {
     return res.send("Reviews")
 })
 
-router.post('/addReview', async (req, res) => {
+router.get('/addReview/:slug', (req, res) => {
+    res.render('reviews/addReview', {
+        slug: req.params.slug,
+        review: MovieReviews.build()
+    })
+})
+
+router.post('/addReview/:slug', async (req, res) => {
     try {
         const userId = 1
-        const movieId = 1
-        const {review_title, review_body, rating} = req.body
+        const movieQuery = await Movie.findOne(({
+            where: {
+                slug: req.params.slug
+            }
+        }))
+        console.log(movieQuery)
+        const movieId = movieQuery.id
+        const {reviewTitle, reviewBody, rating} = req.body
     
         const review = await MovieReviews.create({
-            review_title: review_title,
-            review_text: review_body,
+            review_title: reviewTitle,
+            review_body: reviewBody,
             rating: rating,
             movieId: movieId,
             userId: userId

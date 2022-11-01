@@ -9,6 +9,7 @@ const imageUploadPath = require('../functions/path.js')
 const path = require ('path')
 const multer  = require('multer')
 const fs = require('fs')
+const sharp = require('sharp')
 
   /*
     Define Storage and upload objects for the Multer middleware.

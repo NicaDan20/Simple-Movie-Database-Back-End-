@@ -1,0 +1,65 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <% if (movie.path_to_cover !== null) { %>
+                <img src="<%= movie.path_to_cover %>" class="img-thumbnail" alt="Cover">
+            <% } else { %>
+                <img src="/images/uploads/movies/default.png" class="img-thumbnail" alt="Default">
+            <% } %>
+        </div>
+        <div class="col">
+         Title: <%- movie.title%>
+        </div>
+        <div class="col">
+         Release Date: <%- movie.release_date%>
+        </div>
+        <div class="col">
+            Directed by: <%- movie.director.name%>
+           </div>   
+        <div class="col">
+        Genre: <%= movie.genre %>
+        </div>
+      </div>
+      <br>
+    <div class="row">
+        <div class="col">
+            <p>Description: </p>
+            <%- movie.description%>
+        </div>
+    </div>
+    <br>
+
+    <% if (movie.movie_reviews !== null) { %>
+        <h2 class="text-center">Reviews for <%= movie.title %></h2>
+        <% movie.movie_reviews.forEach(review => { %>            
+                        <div class="card movie_card">
+                            <div class="card-body">
+                              <a href="movies/title/<%= movie.slug %>"><h5 class="card-title"><%= review.review_title %></h5></a>
+                                  <br>
+                                  <span class="movie_info"><i> <%= review.review_body %> </i></span>
+                                  <br>
+                                  <br>
+                                     <span class="movie_info float-right"><i class="fas fa-star"></i> 9 / 10</span>
+                            </div>
+                          </div>      
+                    
+                        </div>
+            </div>
+            <% }) %>
+    <% } %>
+    <br>
+    <br>
+    <hr>
+    <h5>Write a review for <%= movie.title %></h5>
+    <br> <a href="/reviews/addReview/<%= movie.slug %>">Write review</a>
+</div>
+  
+
+
+<!--
+
+
+
+-->

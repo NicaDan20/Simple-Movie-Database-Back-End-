@@ -3,14 +3,24 @@ const router = express()
 
 const {Movie, Director} = require('../models')
 
-router.get('/', (req, res) => {
-    res.send("Movies main page")
+router.get('/', async (req, res) => {
+    try {
+        const movies = await Movie.findAll({
+            include: { all: true, nested: true }
+        })
+        res.render('movies/show_movies', {
+            movies: movies
+        })
+    } catch (err) {
+        console.log(err)
+        res.json(err)
+    }
 })
 
 router.get('/all', async (req, res) => {
     try {
         const movies = await Movie.findAll({
-            include: [ 'director', 'movie_reviews'],
+            include: {all: true}
         })
         res.json(movies)
     } catch (err) {
@@ -24,16 +34,21 @@ router.get('/title/:slug', async (req, res) => {
     console.log(slug)
     try {
         const movie = await Movie.findOne({
-            include: ['director'],
+            include: ['director', 'movie_reviews'],
             where: {
                 slug: slug
-            }
+            }, 
         })
-        res.json(movie)
+        console.log(movie)
+        res.render('movies/show_movie', {
+            movie: movie
+        })
     } catch (err) {
         console.log(err)
         res.status(500).json(err)
     }
 })
+
+
 
 module.exports = router

@@ -13,7 +13,7 @@ module.exports = {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4
       },
-      review_text: {
+      review_body: {
         type: DataTypes.TEXT,
         allowNull: true
       },

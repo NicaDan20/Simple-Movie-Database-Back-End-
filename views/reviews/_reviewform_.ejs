@@ -1,0 +1,19 @@
+<div class="form-row">
+    <div class="col-5">
+        <label for="movieTitle">Add a title to your review</label>
+        <input type="text" class="form-control" placeholder="This move is great!" id="reviewTitle" name="reviewTitle" value="<%= review.review_title %>">
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <label for="description">Add review here</label>
+        <textarea class="form-control" id="reviewBody" name="reviewBody" rows="4"><%= review.review_body %></textarea>
+    </div>
+</div>
+
+<br>
+<div class="row">
+    <button type="submit" class="btn btn-success">Post Review</button>
+    <a href="/admin" class="btn btn-danger">Cancel</a>
+</div>
+
