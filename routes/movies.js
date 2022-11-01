@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
 router.get('/all', async (req, res) => {
     try {
         const movies = await Movie.findAll({
-            include: [ 'director'],
+            include: [ 'director', 'movie_reviews'],
         })
         res.json(movies)
     } catch (err) {

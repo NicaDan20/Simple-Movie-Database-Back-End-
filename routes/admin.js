@@ -190,7 +190,6 @@ router.get('/editMovie/:uuid', async (req, res) => {
 
 router.put('/editMovie/:uuid', upload.single('img'), async (req, res) => {
     const {title, director, genre, description, release_date} = req.body
-    console.log("HELLO " + req.body.genre)
     const uuid = req.params.uuid
     try {
         const movie = await Movie.findOne({

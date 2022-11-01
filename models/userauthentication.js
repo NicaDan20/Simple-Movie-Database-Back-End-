@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER
   }, {
     sequelize,
+    tableName: 'user_authentications',
     modelName: 'UserAuthentication',
   });
   return UserAuthentication;

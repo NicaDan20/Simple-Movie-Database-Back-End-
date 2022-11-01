@@ -20,11 +20,13 @@ const authRouter = require('./routes/auth.js')
 const adminRouter = require('./routes/admin.js')
 const movieRouter = require('./routes/movies.js')
 const nameRouter = require('./routes/name.js')
+const reviewRouter = require('./routes/reviews.js')
 
 app.use('/auth', authRouter)
 app.use('/admin', adminRouter)
 app.use('/movies', movieRouter)
 app.use('/name', nameRouter)
+app.use('/reviews', reviewRouter)
 
 console.log(`Live on Port ${port}`)
 
