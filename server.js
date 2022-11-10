@@ -6,6 +6,9 @@ const port = parseInt(process.env.PORT)
 const path = require('path')
 const cookieParser = require('cookie-parser')
 const methodOverride = require('method-override')
+const passport = require('passport')
+const session = require('express-session')
+const flash = require('express-flash')
 
 app.set('view engine', 'ejs')
 app.set("views", path.join(__dirname, 'views'));
@@ -15,6 +18,13 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
+app.use(flash())
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false 
+}))
+app.use(passport.session())
 
 const authRouter = require('./routes/auth.js')
 const adminRouter = require('./routes/admin.js')
@@ -31,7 +41,7 @@ app.use('/reviews', reviewRouter)
 console.log(`Live on Port ${port}`)
 
 app.get('/', (req, res) => {
-    res.send("Hi")
+    res.render('index', {name: req.user.id})
 })
 
 app.listen({port: port}, async () => {

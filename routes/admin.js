@@ -4,7 +4,7 @@
 
 const express = require('express')
 const router = express()
-const {Movie, Director} = require('../models')
+const {Movie, Director, UserProfile} = require('../models')
 const imageUploadPath = require('../functions/path.js')
 const path = require ('path')
 const multer  = require('multer')
@@ -383,6 +383,17 @@ router.delete('/deleteDirector/:uuid', async (req, res) => {
     }
 })
 
+router.get('/getUsers', async (req, res) => {
+    try {
+        const users = await UserProfile.findAll({
+            include: ['user_auths']
+        })
+        res.json(users)
+    } catch (err) {
+        console.log(err)
+        res.json(err)
+    }
+})
 
 
 /* HELPER FUNCTIONS BELOW */

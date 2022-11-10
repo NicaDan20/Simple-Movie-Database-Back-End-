@@ -13,11 +13,12 @@ module.exports = {
      * }], {});
     */
 
-     await queryInterface.bulkInsert('user_profiles', [{
-        username: 'Biggus',
-        createdAt: new Date(),
-        updatedAt: new Date()
-     }])
+   //  await queryInterface.bulkInsert('user_profiles', [{
+// username: 'Biggus',
+  //      authId: '1',
+ //       createdAt: new Date(),
+   //     updatedAt: new Date()
+ //    }])
   },
 
   async down (queryInterface, Sequelize) {
