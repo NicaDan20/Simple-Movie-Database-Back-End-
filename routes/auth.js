@@ -4,7 +4,7 @@ const router = express()
 const passport = require('passport')
 const initPassport = require('../config/passport_config')
 const flash = require('express-flash')
-const {checkAuthenticated, checkNotAuthenticated} = require('../functions/authenticated.js')
+const {checkAuthenticated, checkNotAuthenticated} = require('../middleware/authenticated.js')
 initPassport(passport)
 router.use(passport.initialize())
 router.use(flash())
@@ -43,5 +43,14 @@ router.post("/login", checkNotAuthenticated, passport.authenticate('local', {
     failureRedirect: '/auth/login',
     failureFlash: true
 }))
+
+router.delete('/logout', (req, res) => {
+    req.logOut(function (err) {
+        if(err) {
+            return next(err)
+        }
+        res.redirect('/auth/login')
+    })
+})
 
 module.exports = router

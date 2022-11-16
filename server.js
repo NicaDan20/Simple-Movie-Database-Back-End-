@@ -9,11 +9,17 @@ const methodOverride = require('method-override')
 const passport = require('passport')
 const session = require('express-session')
 const flash = require('express-flash')
+const SequelizeStore = require('connect-session-sequelize')(session.Store)
+const sessionStore = new SequelizeStore({
+        db: sequelize, 
+    })
 
 app.set('view engine', 'ejs')
 app.set("views", path.join(__dirname, 'views'));
 
 app.use(express.static(__dirname + '/public'))
+app.use('/movies', express.static(__dirname + '/public'))
+app.use('/movies/search', express.static(__dirname + '/public'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -22,8 +28,13 @@ app.use(flash())
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false 
+    saveUninitialized: false,
+    proxy: true,
+    store: sessionStore
 }))
+
+sessionStore.sync()
+
 app.use(passport.session())
 
 const authRouter = require('./routes/auth.js')
@@ -41,7 +52,7 @@ app.use('/reviews', reviewRouter)
 console.log(`Live on Port ${port}`)
 
 app.get('/', (req, res) => {
-    res.render('index', {name: req.user.id})
+    res.render('index')
 })
 
 app.listen({port: port}, async () => {
@@ -49,4 +60,3 @@ app.listen({port: port}, async () => {
     await sequelize.authenticate()
     console.log('Connected to Database!')
 })
-

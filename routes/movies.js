@@ -1,7 +1,10 @@
 const express = require('express')
 const router = express()
 
-const {Movie, Director} = require('../models')
+const {Sequelize} = require('sequelize')
+const {Movie, Director, MovieReviews, sequelize} = require('../models')
+const {checkReviewExists} = require('../middleware/reviews')
+const {Op} = require('sequelize')
 
 router.get('/', async (req, res) => {
     try {
@@ -17,10 +20,35 @@ router.get('/', async (req, res) => {
     }
 })
 
+router.get('/search', async (req, res) => {
+    try {
+        const {search} = req.query
+        console.log(`Hello ${search}`)
+        const movies = await Movie.findAll({
+            where: {
+                title: {
+                    [Op.iLike]: `%${search}%`
+                }
+            },
+            include: {all: true, nested: true}
+        })
+        if (movies.length !== 0) {
+            res.render('movies/show_movies', {
+                movies: movies
+            })
+        } else {
+            res.send('No movies found!')
+        }
+    } catch (err) {
+        res.json(err)
+    }
+})
+
 router.get('/all', async (req, res) => {
     try {
         const movies = await Movie.findAll({
-            include: {all: true}
+            include: ['users'],
+            
         })
         res.json(movies)
     } catch (err) {
@@ -29,9 +57,24 @@ router.get('/all', async (req, res) => {
     }
 })
 
-router.get('/title/:slug', async (req, res) => {
+router.get('/test', async (req, res) => {
+    try {
+        const movies = await MovieReviews.findAll({
+            include: ['movie_reviews', 'user_reviews'],
+            where: {
+                "$movie_reviews.slug$": 'goodfellas-1234'
+            }
+        })        
+        res.json(movies)
+    } catch (err) {
+        console.log(err)
+        res.json(err)
+    }
+})
+
+
+router.get('/title/:slug', checkReviewExists, async (req, res) => {
     let slug = req.params.slug
-    console.log(slug)
     try {
         const movie = await Movie.findOne({
             include: ['director', 'movie_reviews'],
@@ -39,7 +82,6 @@ router.get('/title/:slug', async (req, res) => {
                 slug: slug
             }, 
         })
-        console.log(movie)
         res.render('movies/show_movie', {
             movie: movie
         })

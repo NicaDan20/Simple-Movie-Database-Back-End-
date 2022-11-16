@@ -18,7 +18,7 @@ module.exports = {
       title: 'Goodfellas',
       genre: 'Crime',
       release_date: new Date(),
-      path_to_cover: 'public/images/movies/default.jpg',
+      path_to_cover: null,
       description: "The goodfellas are back in town",
       slug: 'goodfellas-1234',
       directorId: 1,

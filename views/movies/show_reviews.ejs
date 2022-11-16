@@ -17,43 +17,54 @@
 
 
 <div class="container mt-5">
-	<h2 class="text-center">Movie List</h2>
+	<h2 class="text-center">Reviews for <%= movie.title %></h2>
+  
+  <% if (locals.REVIEW_EXISTS) { %>
+    <h5>Edit your review for <%= movie.title %></h5>
+    <br> <a href="/reviews/editReview/<%= movie.slug %>">Edit Review</a>
 
-  Sort by: Popularity | Runtime | A-Z | User Rating | Release Date | Your Rating
-  <br>
+    <h5>Your Review</h5>
+    <div class="card">
+      <div class="card-horizontal">
+          </div>
+          <div class="card-body">
+            <h4 class="card-title"><%= locals.USER_REVIEW[0].review_title %></h4>
+            <% if(locals.USER_REVIEW[0].rating !== null) { %>
+              <span class="movie_info"><i class="fas fa-star"></i> <%=locals.USER_REVIEW[0].rating %> </span>
+           <% } %> 
+           <br>
+            <p class="card-text"><%= locals.USER_REVIEW[0].review_body %> </p>
+          </div>
+      </div>
 
-        <% movies.forEach(movie => { %>
+<% } else { %>
+  <h5>Write a review for <%= movie.title %></h5>
+  <br> <a href="/reviews/addReview/<%= movie.slug %>">Write Review</a>
+<% } %>
+
+
+        <% reviews.forEach(review => { %>
           <br>
           <div class="card">
             <div class="card-horizontal">
-                <div class="img-square-wrapper">
-                  <% if (movie.path_to_cover !== null) { %>
-                    <img class="" src="<%= movie.path_to_cover %>" width="115" height="155" alt="Cover">
-                    <% } else { %>
-                    <img src="/images/uploads/movies/default.png" width="115" height="155" alt="Default">
-                <% } %>
                 </div>
                 <div class="card-body">
-                  <a href="/movies/title/<%= movie.slug %>"><h4 class="card-title"><%= movie.title %></h4></a>
-                  <span class="movie_info"> <p><small>Runtime | <%= movie.genre %> | <%=movie.release_date %> </small></p>
-                  <% if(movie.rating_count !== 0) { %>
-                    <span class="movie_info"><i class="fas fa-star"></i> <%=movie.rating %> </span>
+                  <h4 class="card-title"><%= review.review_title %></h4>
+                  <span class="movie_info"> <small> <%= review.user_reviews.username %> </small>
+                    <br>
+                  <% if(review.rating !== null) { %>
+                    <span class="movie_info"><i class="fas fa-star"></i> <%=review.rating %> </span>
                  <% } %> 
                  <br>
-                  <span class="movie_info">Directed by: <a href="/name/<%= movie.director.slug %>"> <%= movie.director.name %> </a> </span>
-                  <br>
-                  <p class="card-text"><%= movie.description %> </p>
+                  <p class="card-text"><%= review.review_body %> </p>
                 </div>
             </div>
-        </div>
           <% }) %>
 		
       
 
-	</div>
-<br>
 </div>
- 
+
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 

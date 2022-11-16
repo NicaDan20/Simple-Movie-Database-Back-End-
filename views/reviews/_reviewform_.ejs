@@ -1,19 +1,37 @@
 <div class="form-row">
     <div class="col-5">
-        <label for="movieTitle">Add a title to your review</label>
-        <input type="text" class="form-control" placeholder="This move is great!" id="reviewTitle" name="reviewTitle" value="<%= review.review_title %>">
+        <label for="movieTitle">Add a headline to your review</label>
+        <input type="text" required class="form-control" placeholder="This move is great!" id="reviewTitle" name="reviewTitle" value="<%= review.review_title %>">
     </div>
+    <div class="col-1">
+        <label for="movieTitle">Rating</label>
+        <select class="form-control" aria-label="Default select example" id="rating", name="rating">
+            <option value="<%= review.rating %>" selected hidden><%= review.rating %></option>
+            <option value='No Rating'>No Rating</option>
+            <option value=0>0</option>
+            <option value=1>1</option>
+            <option value=2>2</option>
+            <option value=3>3</option>
+            <option value=4>4</option>
+            <option value=5>5</option>
+            <option value=6>6</option>
+            <option value=7>7</option>
+            <option value=8>8</option>
+            <option value=9>9</option>
+            <option value=10>10</option>
+        </select>
+              </div>
 </div>
 <div class="row">
     <div class="col">
         <label for="description">Add review here</label>
-        <textarea class="form-control" id="reviewBody" name="reviewBody" rows="4"><%= review.review_body %></textarea>
+        <textarea required class="form-control" id="reviewBody" name="reviewBody" rows="4"><%= review.review_body %></textarea>
     </div>
 </div>
 
 <br>
 <div class="row">
     <button type="submit" class="btn btn-success">Post Review</button>
-    <a href="/admin" class="btn btn-danger">Cancel</a>
+    <a href="/" class="btn btn-danger">Cancel</a>
 </div>
 

@@ -54,13 +54,26 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true
     },
+    rating: {
+      type: DataTypes.DOUBLE,
+      allowNull: true,
+      defaultValue: 0,
+      get() {
+        const rating = this.getDataValue('rating')
+        return (Math.round(rating * 100) / 100).toFixed(2);
+      }
+    },
+    rating_count: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0,
+    }
   }, {
     sequelize,
     tableName: 'movies',
     modelName: 'Movie',
     hooks: {
       beforeValidate: (movie, options) => {
-
         movie.slug = generateUnique(slugify([movie.title, movie.uuid].join(' ')))
       }
     },

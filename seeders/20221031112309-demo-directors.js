@@ -17,7 +17,7 @@ module.exports = {
       uuid: "d1904fc8-eddb-4766-b342-908be485a8d8",
       name: 'Martin Scorsese',
       birth_date: new Date(),
-      path_to_image: 'public/images/directors/default.jpg',
+      path_to_image: null,
       bio: "He's the great Martin Scorsese! So great!",
       slug: 'martin-scorsese-1234',
       createdAt: new Date(),

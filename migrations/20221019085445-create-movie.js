@@ -43,6 +43,16 @@ module.exports = {
         type: DataTypes.INTEGER,
         allowNull: false
       },
+      rating: {
+        type: DataTypes.DOUBLE,
+        allowNull: true,
+        default: 0
+      },
+      rating_count: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
+      },  
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE
