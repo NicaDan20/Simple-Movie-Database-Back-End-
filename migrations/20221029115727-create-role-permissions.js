@@ -1,28 +1,25 @@
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Role_Permissions', {
+  async up(queryInterface, DataTypes) {
+    await queryInterface.createTable('role_permissions', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: DataTypes.INTEGER
       },
       roleId: {
-        type: Sequelize.INTEGER
+        type: DataTypes.INTEGER,
+        allowNull: false
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      permissionId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
       }
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Role_Permissions');
+    await queryInterface.dropTable('role_permissions');
   }
 };

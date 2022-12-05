@@ -2,6 +2,10 @@
 
 const slugify = require('slugify')
 const {generateUnique, prettyFormatDate} = require('../functions/functions')
+const { marked } = require('marked')
+const { JSDOM } = require('jsdom')
+const createDomPurify = require('dompurify')
+const domPurify = createDomPurify(new JSDOM().window)
 
 const {
   Model
@@ -29,14 +33,29 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       allowNull: false
     },
+    runtime: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     genre: { 
       type: DataTypes.STRING,
       allowNull: false
     },
     description: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+    },
+    wiki: {
       type: DataTypes.TEXT,
       unique: true,
-      allowNull: false
+      allowNull: false,
+      set(value) {
+        if (value !== null) {
+          this.setDataValue('wiki', domPurify.sanitize(marked(value)))
+        }
+      }
+
     },
     release_date: { 
       type: DataTypes.DATEONLY,

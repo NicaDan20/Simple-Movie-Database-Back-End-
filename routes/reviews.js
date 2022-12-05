@@ -5,8 +5,11 @@ const router = express()
 const {MovieReviews, Movie, sequelize} = require('../models')
 const {checkReviewExists, redirectReviewPage} = require('../middleware/reviews')
 const {checkNotAuthenticated} = require('../middleware/authenticated')
+const {getLoggedUser} = require('../middleware/authenticated.js')
+const {checkPerms, checkAdmin} = require('../middleware/perms.js')
 
-router.get('/showReviews/:slug', checkReviewExists, async (req, res) => {
+router.get('/:slug', checkReviewExists, getLoggedUser, async (req, res) => {
+    res.clearCookie("_message", { httpOnly: true });
     const {slug} = req.params
     const reviews = await MovieReviews.findAll({
         include: ['movie_reviews', 'user_reviews'],
@@ -22,12 +25,13 @@ router.get('/showReviews/:slug', checkReviewExists, async (req, res) => {
     
     res.render('movies/show_reviews', {
         reviews: reviews,
-        movie: movie
+        movie: movie,
+        _message: req.cookies["_message"]
     })
 
 })
 
-router.get('/addReview/:slug', checkReviewExists, redirectReviewPage, (req, res) => {
+router.get('/addReview/:slug', checkReviewExists, redirectReviewPage, getLoggedUser, checkPerms('CAN POST REVIEWS'), checkAdmin, (req, res) => {
     res.render('reviews/addReview', {
         slug: req.params.slug,
         review: MovieReviews.build({
@@ -38,7 +42,7 @@ router.get('/addReview/:slug', checkReviewExists, redirectReviewPage, (req, res)
     })
 })
 
-router.get('/editReview/:slug', async (req, res) => {
+router.get('/editReview/:slug', getLoggedUser, checkPerms('CAN UPDATE REVIEWS'), checkAdmin, async (req, res) => {
     try {
         const movie = await Movie.findOne({
             attributes: ['id'],
@@ -61,11 +65,11 @@ router.get('/editReview/:slug', async (req, res) => {
         })    
     } catch (err) {
         console.log(err)
-        res.status(404).redirect(`/movies/title/${req.params.slug}`)
+        res.status(404).redirect(`/reviews/${req.params.slug}`)
     }
 })
 
-router.post('/addReview/:slug', async (req, res) => {
+router.post('/addReview/:slug', getLoggedUser, checkPerms('CAN POST REVIEWS'), checkAdmin, async (req, res) => {
     try {
         const movieQuery = await Movie.findOne(({
             where: {
@@ -89,14 +93,16 @@ router.post('/addReview/:slug', async (req, res) => {
 
         await review.save()
 
-        return res.json(review)    
+        res.cookie("_message", "Review added succesfully!", { httpOnly: true });
+        res.status(200).redirect(`/reviews/${req.params.slug}`)
     } catch (err) {
         console.log(err)
-        return res.json(err)
+        res.cookie("_message", "Something went wrong! Please try again later.", { httpOnly: true });
+        res.status(404).redirect(`/reviews/${req.params.slug}`)
         }
 })
 
-router.post('/editReview/:slug', async (req, res) => {
+router.put('/editReview/:slug', getLoggedUser, checkPerms('CAN UPDATE REVIEWS'), checkAdmin, async (req, res) => {
     try {
         const movieQuery = await Movie.findOne({
             where: {
@@ -126,10 +132,41 @@ router.post('/editReview/:slug', async (req, res) => {
         }
 
         await review.save()
-        res.json(review)
+
+        res.cookie("_message", "Review edited succesfully!", { httpOnly: true });
+        res.status(200).redirect(`/reviews/${req.params.slug}`)
 
     } catch(err) {
+        res.cookie("_message", "Something went wrong! Please try again later.", { httpOnly: true });
+        res.status(404).redirect(`/reviews/${req.params.slug}`)
+    }
+})
+
+router.put('/changeFavourite/:slug', getLoggedUser, checkAdmin, async (req, res) => {
+    try {
+        const movieQuery = await Movie.findOne({
+            where: {
+                slug: req.params.slug
+            }
+        })
+        const userId = req.user.id
+        const movieId = movieQuery.id
+
+        let review = await MovieReviews.findOne({
+            where: {
+                movieId: movieId,
+                userId: userId
+            }
+        })
+
+        review.isFavourite = true
+
+        await review.save()
+        res.redirect("/movies")
+
+    } catch (err) {
         console.log(err)
+        res.redirect("/movies")
     }
 })
 
@@ -178,13 +215,9 @@ async function editRating (m_id, u_id, option, rating=0) {
     
         switch (option) {
             case "UPDATE": {
-                console.log(`1. =========== Sum of Ratings: ${sumOfRatings} ========= userRating.rating : ${userRating.rating} ========== rating : ${rating} ========= count: ${count} `)
                 sumOfRatings -= userRating.rating
-                console.log(`2. =========== Sum of Ratings: ${sumOfRatings} ========= userRating.rating : ${userRating.rating} ========== rating : ${rating} ========= count: ${count} `)
                 sumOfRatings += parseInt(rating)
-                console.log(`3. =========== Sum of Ratings: ${sumOfRatings} ========= userRating.rating : ${userRating.rating} ========== rating : ${rating} ========= count: ${count} `)
                 overallRating = sumOfRatings/count
-                console.log(`4. =========== Sum of Ratings: ${sumOfRatings} ========= userRating.rating : ${userRating.rating} ========== rating : ${rating} ========= count: ${count} `)
 
                 movieOverallRating.rating = overallRating
     

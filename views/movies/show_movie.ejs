@@ -11,7 +11,7 @@
         <div class="col-md-6 px-0">
           <h1 class="display-4 font-italic"><%= movie.title %></h1>
           <p class="lead my-3"><%= movie.description %></p>
-          <p class="lead mb-0 text-white font-weight-bold">Runtime | <%= movie.genre %> | <%=movie.release_date %></p>
+          <p class="lead mb-0 text-white font-weight-bold"><%= movie.runtime %> minutes | <%= movie.genre %> | <%=movie.release_date %></p>
         </div>
       </div>
 
@@ -26,9 +26,9 @@
               <p class="card-text mb-auto"> <%= movie.director.bio %></p>
             </div>
             <% if (movie.director.path_to_image !== null) { %>
-                <img src="<%= movie.director.path_to_image %>" class="card-img-right flex-auto d-none d-md-block img-thumbnail" width="250" height="250" alt="Cover">
+                <img src="<%= movie.director.path_to_image %>" class="card-img-right" width="250" height="250" alt="Cover">
             <% } else { %>
-                <img src="/images/uploads/directors/default.png" class="card-img-right flex-auto d-none d-md-block img-thumbnail" width="250" height="250" alt="Default">
+                <img src="/images/uploads/directors/default.png" class="card-img-right" width="250" height="250" alt="Default">
             <% } %>
           </div>
         </div>
@@ -39,11 +39,11 @@
                                     <strong class="d-inline-block mb-2 text-success"><span class="movie_info"><i class="fas fa-star"></i> <%=movie.rating %> </span></strong>
                  <% } %> 
               <h3 class="mb-0">
-                <a class="text-dark" href="/reviews/showReviews/<%= movie.slug %>">Reviews for <%= movie.title %></a>
+                <a class="text-dark" href="/reviews/<%= movie.slug %>">Reviews for <%= movie.title %></a>
               </h3>
               <br>
               <p class="card-text mb-auto">Click more to see all the reviews for this movie.</p>
-              <a href="#">More</a>
+              <a href="/reviews/<%= movie.slug %>">More</a>
             </div>
           </div>
         </div>
@@ -52,46 +52,16 @@
     
     <main role="main" class="container">
         <div class="row">
-          <div class="col-md-8 blog-main">
+          <div class="col-md-12 blog-main">
             <h3 class="pb-3 mb-4 font-italic border-bottom">
-              From the Firehose
-            </h3>
+              About <%= movie.title %>             </h3>
   
             <div class="blog-post">
-              <h2 class="blog-post-title">Sample blog post</h2>
-              <p class="blog-post-meta">January 1, 2014 by <a href="#">Mark</a></p>
-  
-              <p>This blog post shows a few different types of content that's supported and styled with Bootstrap. Basic typography, images, and code are all supported.</p>
-              <hr>
-              <p>Cum sociis natoque penatibus et magnis <a href="#">dis parturient montes</a>, nascetur ridiculus mus. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis. Cras mattis consectetur purus sit amet fermentum.</p>
-              <blockquote>
-                <p>Curabitur blandit tempus porttitor. <strong>Nullam quis risus eget urna mollis</strong> ornare vel eu leo. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              </blockquote>
+                <%- movie.wiki %>
             </div><!-- /.blog-post -->  
 
 </div>
-
-    <% if (movie.movie_reviews !== null) { %>
-        <h2 class="text-center">Reviews for <%= movie.title %></h2>
-        <% movie.movie_reviews.forEach(review => { %>            
-                        <div class="card movie_card">
-                            <div class="card-body">
-                              <a href="movies/title/<%= movie.slug %>"><h5 class="card-title"><%= review.review_title %></h5></a>
-                                  <br>
-                                  <span class="movie_info"><i> <%= review.review_body %> </i></span>
-                                  <br>
-                                  <br>
-                                <span class="movie_info float-right"><i class="fas fa-star"></i> <%= review.rating %> / 10</span>
-                            </div>                    
-            </div>
-            <% }) %>
-    <% } %>
     <br>
-    <br>
-    <hr>
-    <h5>Write a review for <%= movie.title %></h5>
-    <br> <a href="/reviews/addReview/<%= movie.slug %>">Write Review</a>
-    <br> <a href="/reviews/editReview/<%= movie.slug %>">Edit Review</a>
 </div>
   
 

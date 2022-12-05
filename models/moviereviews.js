@@ -1,4 +1,15 @@
 'use strict';
+
+const { marked } = require('marked')
+const { JSDOM } = require('jsdom')
+const createDomPurify = require('dompurify')
+const domPurify = createDomPurify(new JSDOM().window)
+
+marked.setOptions({
+  gfm: true,
+  breaks: true
+})
+
 const {
   Model
 } = require('sequelize');
@@ -21,7 +32,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     review_body: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true,
+      set(value) {
+        if (value !== null) {
+          this.setDataValue('review_body', domPurify.sanitize(marked.parseInline(value)))
+        }
+      }
     },
     review_title: {
       type: DataTypes.STRING,
@@ -31,11 +47,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.SMALLINT,
       allowNull: true,
     },
-    isFavourite: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false
-    }
   }, {
     sequelize,
     tableName: 'movie_reviews',

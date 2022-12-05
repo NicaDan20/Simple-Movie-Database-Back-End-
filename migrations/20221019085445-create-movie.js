@@ -18,15 +18,24 @@ module.exports = {
         unique: true,
         allowNull: false
       },
+      runtime: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       genre: {
         type: DataTypes.STRING,
         allowNull: false
       },
       description: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         unique: true,
         allowNull: false
       },
+      wiki: {
+        type: DataTypes.TEXT,
+        unique: true,
+        allowNull: false,
+      },  
       release_date: {
         type: DataTypes.DATEONLY,
         allowNull: false

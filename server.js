@@ -17,9 +17,12 @@ const sessionStore = new SequelizeStore({
 app.set('view engine', 'ejs')
 app.set("views", path.join(__dirname, 'views'));
 
+const {getLoggedUser} = require('./middleware/authenticated')
+
 app.use(express.static(__dirname + '/public'))
 app.use('/movies', express.static(__dirname + '/public'))
-app.use('/movies/search', express.static(__dirname + '/public'))
+app.use('/profile', express.static(__dirname + '/public'))
+app.use('/reviews', express.static(__dirname + '/public'))
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -42,16 +45,18 @@ const adminRouter = require('./routes/admin.js')
 const movieRouter = require('./routes/movies.js')
 const nameRouter = require('./routes/name.js')
 const reviewRouter = require('./routes/reviews.js')
+const profileRouter = require('./routes/profile.js')
 
 app.use('/auth', authRouter)
 app.use('/admin', adminRouter)
 app.use('/movies', movieRouter)
 app.use('/name', nameRouter)
 app.use('/reviews', reviewRouter)
+app.use('/profile', profileRouter)
 
 console.log(`Live on Port ${port}`)
 
-app.get('/', (req, res) => {
+app.get('/', getLoggedUser, (req, res) => {
     res.render('index')
 })
 

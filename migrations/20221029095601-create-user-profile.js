@@ -20,6 +20,10 @@ module.exports = {
       authId: {
         type: DataTypes.INTEGER,
         allowNull: false
+      },
+      roleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
       },  
       createdAt: {
         allowNull: false,

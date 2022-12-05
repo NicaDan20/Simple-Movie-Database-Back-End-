@@ -25,11 +25,6 @@ module.exports = {
         type: DataTypes.SMALLINT,
         allowNull: true,
       },
-      isFavourite: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-      },
       movieId: {
         type: DataTypes.INTEGER,
         allowNull: false

@@ -4,12 +4,14 @@
 
 const express = require('express')
 const router = express()
-const {Movie, Director, UserProfile} = require('../models')
+const {Movie, Director, UserProfile, Role, Permission, Role_Permissions} = require('../models')
 const imageUploadPath = require('../functions/path.js')
 const path = require ('path')
 const multer  = require('multer')
 const fs = require('fs')
 const sharp = require('sharp')
+const { getLoggedUser } = require('../middleware/authenticated')
+const {checkPerms, checkAdmin} = require('../middleware/perms.js')
 
   /*
     Define Storage and upload objects for the Multer middleware.
@@ -55,7 +57,7 @@ const upload = multer({
     Display main panels Route
  */
 
-router.get('/', (req, res) => {
+router.get('/', getLoggedUser, checkPerms("CAN ACCESS ADMIN PANEL"), checkAdmin, (req, res) => {
     let _message = req.cookies["_message"]
     res.clearCookie("_message", { httpOnly: true });
     res.render('admin/panel', {
@@ -63,14 +65,14 @@ router.get('/', (req, res) => {
     })
 })
 
-router.get('/showDirectors', async (req, res) => {
+router.get('/showDirectors', getLoggedUser, checkPerms("CAN ACCESS ADMIN PANEL"), checkAdmin, async (req, res) => {
     const directors = await Director.findAll()
     res.render('admin/showDirectors', {
         directors: directors
     })
 })
 
-router.get('/showMovies', async (req, res) => {
+router.get('/showMovies', getLoggedUser, checkPerms("CAN ACCESS ADMIN PANEL"), checkAdmin, async (req, res) => {
     const movies = await Movie.findAll()
     res.render('admin/showMovies', {
         movies: movies
@@ -81,7 +83,7 @@ router.get('/showMovies', async (req, res) => {
     MOVIE RELATED ROUTES
  */
 
-router.get('/addMovie', async (req, res) => {
+router.get('/addMovie', getLoggedUser, checkPerms('CAN ADD MOVIES'), checkAdmin, async (req, res) => {
     try {
         res.render('admin/addMovie', {
             directors: await Director.findAll({
@@ -92,7 +94,9 @@ router.get('/addMovie', async (req, res) => {
                 genre: "Select Genre",
                 director: null,
                 description: null,
-                release_date: Date.now()
+                release_date: Date.now(),
+                runtime: 0,
+                wiki: null
             }),
             directorName: null
         })
@@ -108,8 +112,8 @@ router.get('/addMovie', async (req, res) => {
 Creates New Movie and adds to Database
 */
 
-router.post('/addMovie', upload.single('img'), async (req, res) => {
-    const {title, genre, director, description, release_date} = req.body
+router.post('/addMovie', getLoggedUser, upload.single('img'), checkPerms('CAN ADD MOVIES'), checkAdmin, async (req, res) => {
+    const {title, genre, director, description, release_date, runtime, wiki} = req.body
     try {
         const directorQuery = await Director.findOne({ 
             attributes: ['id'],
@@ -123,7 +127,9 @@ router.post('/addMovie', upload.single('img'), async (req, res) => {
             genre: genre,
             directorId: directorId,
             description: description,
-            release_date: release_date 
+            release_date: release_date,
+            wiki: wiki,
+            runtime: runtime
         })
         if (req.file) {
             movie.path_to_cover = formatPath(req.file.path)
@@ -153,7 +159,9 @@ router.post('/addMovie', upload.single('img'), async (req, res) => {
                 genre: genre,
                 directorId: directorId,
                 description: description,
-                release_date: release_date
+                release_date: release_date,
+                runtime: runtime,
+                wiki: wiki,
             }),
             directorName: directorName
         })
@@ -165,7 +173,7 @@ router.post('/addMovie', upload.single('img'), async (req, res) => {
 Updates Movie with uuid in Database
 */
 
-router.get('/editMovie/:uuid', async (req, res) => {
+router.get('/editMovie/:uuid', getLoggedUser, checkPerms('CAN EDIT MOVIES'), checkAdmin, async (req, res) => {
     const {uuid} = req.params
     try {
         const movie = await Movie.findOne({ where: {uuid} })
@@ -189,8 +197,8 @@ router.get('/editMovie/:uuid', async (req, res) => {
     }
 })
 
-router.put('/editMovie/:uuid', upload.single('img'), async (req, res) => {
-    const {title, director, genre, description, release_date} = req.body
+router.put('/editMovie/:uuid', upload.single('img'), checkPerms('CAN EDIT MOVIES'), getLoggedUser, async (req, res) => {
+    const {title, director, genre, description, release_date, wiki, runtime} = req.body
     const uuid = req.params.uuid
     try {
         const movie = await Movie.findOne({
@@ -214,9 +222,8 @@ router.put('/editMovie/:uuid', upload.single('img'), async (req, res) => {
         movie.genre = genre
         movie.description = description
         movie.release_date = release_date
-
-        console.log("------------------------------------------")
-        console.log(req.body)
+        movie.runtime = runtime
+        movie.wiki = wiki
 
         await movie.save()
         res.cookie("_message", "Movie updated succesfully!", { httpOnly: true });
@@ -231,7 +238,7 @@ router.put('/editMovie/:uuid', upload.single('img'), async (req, res) => {
 Deletes Movie with uuid in Database
 */
 
-router.delete('/deleteMovie/:uuid', async (req, res) => {
+router.delete('/deleteMovie/:uuid', getLoggedUser, checkPerms('CAN REMOVE MOVIES'), checkAdmin, async (req, res) => {
     const {uuid} = req.params
     try {
         await Movie.destroy({
@@ -250,7 +257,7 @@ router.delete('/deleteMovie/:uuid', async (req, res) => {
  DIRECTOR RELATED ROUTES
  */
 
-router.get('/addDirector', (req, res) => {
+router.get('/addDirector', getLoggedUser, checkPerms('CAN ADD DIRECTORS'), (req, res) => {
     res.render('admin/addDirector', {
         director: Director.build({
             name: "",
@@ -262,7 +269,7 @@ router.get('/addDirector', (req, res) => {
 
 /* Create Director and add to Database */
 
-router.post('/addDirector', upload.single('img'), async (req, res) => {
+router.post('/addDirector', upload.single('img'), getLoggedUser, checkPerms('CAN ADD DIRECTORS'), checkAdmin, async (req, res) => {
     const {name, birth_date, bio} = req.body
     try {
         const director = Director.build({
@@ -303,7 +310,7 @@ router.post('/addDirector', upload.single('img'), async (req, res) => {
 
 /* Get edit director page */
 
-router.get('/editDirector/:uuid', async (req, res) => {
+router.get('/editDirector/:uuid', getLoggedUser, async (req, res) => {
     const {uuid} = req.params
     try {
         const director = await Director.findOne({ where: {uuid} })
@@ -317,7 +324,7 @@ router.get('/editDirector/:uuid', async (req, res) => {
 
 /* Edit director with specific uuid */
 
-router.put('/editDirector/:uuid', upload.single('img'), async (req, res) => {
+router.put('/editDirector/:uuid', upload.single('img'), getLoggedUser, checkPerms('CAN EDIT DIRECTORS'), checkAdmin, async (req, res) => {
     const {name, birth_date, bio} = req.body
     const uuid = req.params.uuid
     try {
@@ -356,7 +363,7 @@ router.put('/editDirector/:uuid', upload.single('img'), async (req, res) => {
 
 /* Delete director with specific uuid */
 
-router.delete('/deleteDirector/:uuid', async (req, res) => {
+router.delete('/deleteDirector/:uuid', getLoggedUser, checkPerms('CAN REMOVE DIRECTORS'), checkAdmin, async (req, res) => {
     const uuid = req.params.uuid
     try {
         const {path_to_image} = await Director.findOne({
@@ -383,18 +390,39 @@ router.delete('/deleteDirector/:uuid', async (req, res) => {
     }
 })
 
-router.get('/getUsers', async (req, res) => {
+router.get('/getUsers', getLoggedUser, async (req, res) => {
     try {
-        const users = await UserProfile.findAll({
-            include: ['user_auths']
+        let permission = "CAN ACCESS ADMIN PANEL"
+        const users = await UserProfile.findOne({
+            include: {
+                association: 'role',
+                include: {
+                    association: 'perms',
+                    where: { '$permission$': `${permission}`}
+                }
+            },
+            where: {
+                id: 1
+            }
         })
-        res.json(users)
+    res.json(users)
     } catch (err) {
         console.log(err)
         res.json(err)
     }
 })
 
+router.get('/getRoles', async (req, res) => {
+    try {
+        const roles = await Role.findAll({
+            include: ['perms']
+        })
+        res.send(roles)
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+})
 
 /* HELPER FUNCTIONS BELOW */
 

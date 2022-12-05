@@ -18,7 +18,7 @@ module.exports = {
       name: 'Martin Scorsese',
       birth_date: new Date(),
       path_to_image: null,
-      bio: "He's the great Martin Scorsese! So great!",
+      bio: "Martin Scorsese is an American film director, producer, screenwriter and actor. He is the recipient of many major accolades, including an Academy Award, a Grammy Award, three Emmy Awards, four British Academy Film Awards, two Directors Guild of America Awards, an AFI Life Achievement Award and the Kennedy Center Honor in 2007. Five of his films have been inducted into the National Film Registry by the Library of Congress as culturally, historically or aesthetically significant.",
       slug: 'martin-scorsese-1234',
       createdAt: new Date(),
       updatedAt: new Date()

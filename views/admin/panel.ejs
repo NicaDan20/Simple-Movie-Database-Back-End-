@@ -4,7 +4,7 @@
 
 <%- include ('../partials/navbar.ejs'); %>
 
-<% if (typeof _message !== 'undefined') { %>
+<% if (_message) { %>
     <%= _message %>
 <% } %>
 

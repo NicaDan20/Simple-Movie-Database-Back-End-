@@ -12,4 +12,11 @@ function checkNotAuthenticated(req, res, next) {
     next()
 }
 
-module.exports = {checkAuthenticated, checkNotAuthenticated}
+function getLoggedUser(req, res, next) {
+    if (req.user) {
+        res.locals.CURRENT_USER = req.user
+    }
+    next()
+}
+
+module.exports = {checkAuthenticated, checkNotAuthenticated, getLoggedUser}

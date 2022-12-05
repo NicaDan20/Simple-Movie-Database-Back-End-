@@ -18,6 +18,10 @@
 
 <div class="container mt-5">
 	<h2 class="text-center">Reviews for <%= movie.title %></h2>
+    
+  <% if (_message) { %>
+    <%= _message %>
+  <% } %>
   
   <% if (locals.REVIEW_EXISTS) { %>
     <h5>Edit your review for <%= movie.title %></h5>
@@ -33,7 +37,8 @@
               <span class="movie_info"><i class="fas fa-star"></i> <%=locals.USER_REVIEW[0].rating %> </span>
            <% } %> 
            <br>
-            <p class="card-text"><%= locals.USER_REVIEW[0].review_body %> </p>
+            <div class="card-text"><%- locals.USER_REVIEW[0].review_body %> </div>
+            <button class="read-more" onclick="readMore(this)">Read More</button>
           </div>
       </div>
 
@@ -50,13 +55,14 @@
                 </div>
                 <div class="card-body">
                   <h4 class="card-title"><%= review.review_title %></h4>
-                  <span class="movie_info"> <small> <%= review.user_reviews.username %> </small>
+                  <span class="movie_info"> <small> <a href="/profile/<%= review.user_reviews.uuid %>"><%= review.user_reviews.username %></a> </small>
                     <br>
                   <% if(review.rating !== null) { %>
                     <span class="movie_info"><i class="fas fa-star"></i> <%=review.rating %> </span>
                  <% } %> 
                  <br>
-                  <p class="card-text"><%= review.review_body %> </p>
+                  <div class="card-text"><%- review.review_body %></div>
+                  <button class="read-more" onclick="readMore(this)">Read More</button>
                 </div>
             </div>
           <% }) %>
@@ -67,6 +73,7 @@
 
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="js/readMore.js"></script>
 
 	<script>
 		$(function () {

@@ -3,12 +3,14 @@ const router = express()
 
 const {Director} = require('../models')
 const {calculateAge} = require ('../functions/functions.js')
+const {getLoggedUser} = require('../middleware/authenticated.js')
+const {checkAdmin} = require('../middleware/perms.js')
 
 router.get('/', (req, res) => {
     
 })
 
-router.get('/:slug', async (req, res) => {
+router.get('/:slug', getLoggedUser, checkAdmin, async (req, res) => {
     try {
         slug = req.params.slug
         const director = await Director.findOne({

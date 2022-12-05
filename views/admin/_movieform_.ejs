@@ -34,17 +34,32 @@
         </select>
     </div>
     <div class="col">
-        <label class="control-label" for="date">Release Date</label>
+        <label class="control-label"for="date">Release Date</label>
         <input class="form-control" id="release_date" name="release_date" placeholder="MM/DD/YYY" type="text" value="<%= movie.release_date %>"/>
     </div>
 </div>
 
 <div class="row">
     <div class="col">
-        <label for="description">Description</label>
-        <textarea class="form-control" id="description" name="description" rows="4"><%= movie.description %></textarea>
+        <label for="runtime">Runtime</label>
+        <input class="form-control" id="runtime" name="runtime" type="number" step="1" value="<%= movie.runtime %>"/>
     </div>
+    
+    <div class="col">
+        <label for="description">Description</label>
+        <input type="text" class="form-control" placeholder="Description" id="description" name="description" value="<%= movie.description %>">
+    </div>    
 </div>
+
+
+<div class="row">
+
+<div class="col">
+    <label for="description">Wiki</label>
+    <textarea class="form-control" id="wiki" name="wiki" rows="4"><%= movie.wiki %></textarea>
+</div>
+</div>
+
 
 <div class="row">
     <div class="col">

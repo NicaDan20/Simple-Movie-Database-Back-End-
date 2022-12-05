@@ -5,43 +5,16 @@ const {Sequelize} = require('sequelize')
 const {Movie, Director, MovieReviews, sequelize} = require('../models')
 const {checkReviewExists} = require('../middleware/reviews')
 const {Op} = require('sequelize')
+const {getMovies} = require('../middleware/movies')
+const { getLoggedUser } = require('../middleware/authenticated')
+const {checkAdmin} = require('../middleware/perms.js')
 
-router.get('/', async (req, res) => {
-    try {
-        const movies = await Movie.findAll({
-            include: { all: true, nested: true }
-        })
-        res.render('movies/show_movies', {
-            movies: movies
-        })
-    } catch (err) {
-        console.log(err)
-        res.json(err)
-    }
-})
 
-router.get('/search', async (req, res) => {
-    try {
-        const {search} = req.query
-        console.log(`Hello ${search}`)
-        const movies = await Movie.findAll({
-            where: {
-                title: {
-                    [Op.iLike]: `%${search}%`
-                }
-            },
-            include: {all: true, nested: true}
-        })
-        if (movies.length !== 0) {
-            res.render('movies/show_movies', {
-                movies: movies
-            })
-        } else {
-            res.send('No movies found!')
-        }
-    } catch (err) {
-        res.json(err)
-    }
+router.get('/', getMovies, getLoggedUser, async (req, res) => {
+    res.render('movies/show_movies', {
+        movies: req.movies,
+        currentSort: req.currentSort
+    })
 })
 
 router.get('/all', async (req, res) => {
@@ -59,11 +32,18 @@ router.get('/all', async (req, res) => {
 
 router.get('/test', async (req, res) => {
     try {
-        const movies = await MovieReviews.findAll({
-            include: ['movie_reviews', 'user_reviews'],
+        const movies = await Movie.findAll({
+            include: [{
+                association: 'director'
+            }, {
+            association: 'movie_reviews',
+            required: false,
             where: {
-                "$movie_reviews.slug$": 'goodfellas-1234'
-            }
+                '$movie_reviews.userId$': '1'}
+        }],
+            order: [
+                ['movie_reviews', 'rating', 'ASC'] 
+            ]
         })        
         res.json(movies)
     } catch (err) {
@@ -73,7 +53,7 @@ router.get('/test', async (req, res) => {
 })
 
 
-router.get('/title/:slug', checkReviewExists, async (req, res) => {
+router.get('/title/:slug', getLoggedUser, checkReviewExists, checkAdmin, async (req, res) => {
     let slug = req.params.slug
     try {
         const movie = await Movie.findOne({

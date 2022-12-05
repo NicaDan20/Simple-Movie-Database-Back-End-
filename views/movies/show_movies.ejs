@@ -19,9 +19,89 @@
 <div class="container mt-5">
 	<h2 class="text-center">Movie List</h2>
 
-  Sort by: Popularity | Runtime | A-Z | User Rating | Release Date | Your Rating
-  <br>
+  Sort by: 
+  
+  <% if(currentSort) { %>
+    <% if (currentSort === 'Runtime_descending') { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Runtime_ascending');">Runtime ▼ </a> 
+    <% } else if (currentSort === 'Runtime_ascending') { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Runtime_descending');">Runtime ▲ </a> 
+    <% } else { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Runtime_descending');">Runtime </a> 
+    <% } %> 
+<% } else { %>
+  <a href="#" onclick="addUrlParameter('sort', 'Runtime_descending');">Runtime </a> 
+<% } %>
 
+  |  
+  
+  <% if(currentSort) { %>
+      <% if (currentSort === 'A-Z_descending') { %>
+        <a href="#" onclick="addUrlParameter('sort', 'A-Z_ascending');">A-Z ▼ </a> 
+      <% } else if (currentSort === 'A-Z_ascending') { %>
+        <a href="#" onclick="addUrlParameter('sort', 'A-Z_descending');">A-Z ▲ </a> 
+      <% } else { %>
+        <a href="#" onclick="addUrlParameter('sort', 'A-Z_descending');">A-Z </a> 
+      <% } %> 
+  <% } else { %>
+    <a href="#" onclick="addUrlParameter('sort', 'A-Z_descending');">A-Z </a> 
+  <% } %>
+  |
+  <% if(currentSort) { %>
+      <% if (currentSort === 'User Rating_descending') { %>
+        <a href="#" onclick="addUrlParameter('sort', 'User Rating_ascending');">User Rating ▼ </a> 
+      <% } else if (currentSort === 'User Rating_ascending') { %>
+        <a href="#" onclick="addUrlParameter('sort', 'User Rating_descending');">User Rating ▲ </a> 
+      <% } else { %>
+        <a href="#" onclick="addUrlParameter('sort', 'User Rating_descending');">User Rating </a> 
+      <% } %> 
+  <% } else { %>
+    <a href="#" onclick="addUrlParameter('sort', 'User Rating_descending');">User Rating </a> 
+  <% } %>
+
+  
+  |  <% if(currentSort) { %>
+    <% if (currentSort === 'Release Date_descending') { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Release Date_ascending');">Release Date ▼ </a> 
+    <% } else if (currentSort === 'Release Date_ascending') { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Release Date_descending');">Release Date ▲ </a> 
+    <% } else { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Release Date_descending');">Release Date </a> 
+    <% } %> 
+<% } else { %>
+  <a href="#" onclick="addUrlParameter('sort', 'Release Date_descending');">Release Date </a> 
+<% } %> 
+
+
+| 
+<% if (locals.CURRENT_USER) { %> 
+  <% if(currentSort) { %>
+    <% if (currentSort === 'Your Rating_descending') { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Your Rating_ascending');">Your Rating ▼ </a> 
+    <% } else if (currentSort === 'Your Rating_ascending') { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Your Rating_descending');">Your Rating ▲ </a> 
+    <% } else { %>
+      <a href="#" onclick="addUrlParameter('sort', 'Your Rating_descending');">Your Rating </a> 
+    <% } %> 
+  <% } else { %>
+  <a href="#" onclick="addUrlParameter('sort', 'Your Rating_descending');">Your Rating </a> 
+  <% } %>  
+<% } %>
+
+| <% if(currentSort) { %>
+  <% if (currentSort === 'Number of Reviews_descending') { %>
+    <a href="#" onclick="addUrlParameter('sort', 'Release Date_ascending');">Number of Reviews ▼ </a> 
+  <% } else if (currentSort === 'Number of Reviews_ascending') { %>
+    <a href="#" onclick="addUrlParameter('sort', 'Release Date_descending');">Number of Reviews ▲ </a> 
+  <% } else { %>
+    <a href="#" onclick="addUrlParameter('sort', 'Number of Reviews_descending');">Number of Reviews </a> 
+  <% } %> 
+<% } else { %>
+<a href="#" onclick="addUrlParameter('sort', 'Number of Reviews_descending');">Number of Reviews </a> 
+<% } %> 
+
+
+  <br>
         <% movies.forEach(movie => { %>
           <br>
           <div class="card">
@@ -35,9 +115,14 @@
                 </div>
                 <div class="card-body">
                   <a href="/movies/title/<%= movie.slug %>"><h4 class="card-title"><%= movie.title %></h4></a>
-                  <span class="movie_info"> <p><small>Runtime | <%= movie.genre %> | <%=movie.release_date %> </small></p>
+                  <span class="movie_info"> <p><small><%= movie.runtime %> minutes | <%= movie.genre %> | <%=movie.release_date %> | Add to Watchlist | Add to Favourites </small></p>
                   <% if(movie.rating_count !== 0) { %>
                     <span class="movie_info"><i class="fas fa-star"></i> <%=movie.rating %> </span>
+                    <% if(locals.CURRENT_USER) { %>
+                        || <span class="movie_info">Your rating:
+                            <%= movie?.movie_reviews?.[0]?.rating ?? "You have not rated this movie yet" %>
+                         </span>
+                    <% } %>
                  <% } %> 
                  <br>
                   <span class="movie_info">Directed by: <a href="/name/<%= movie.director.slug %>"> <%= movie.director.name %> </a> </span>
@@ -52,11 +137,18 @@
 
 	</div>
 <br>
+
 </div>
  
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-
+  <script>
+    function addUrlParameter(name, value) {
+      var searchParams = new URLSearchParams(window.location.search)
+      searchParams.set(name, value)
+      window.location.search = searchParams.toString()
+    }
+    </script>    
 	<script>
 		$(function () {
   		$('[data-toggle="tooltip"]').tooltip()

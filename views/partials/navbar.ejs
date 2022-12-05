@@ -13,26 +13,41 @@
           <a class="nav-link" href="/movies/">Movies</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/movies/">Directors</a>
+            <a class="nav-link" href="/directors/">Directors</a>
           </li>  
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Account
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/admin">Admin Panel</a>
-          </div>
-        </li>
+
+          <% if(locals.CURRENT_USER) { %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <%= locals.CURRENT_USER.username %>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/profile/<%=locals.CURRENT_USER.uuid %>">My Profile</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();"> Log Out</a>
+                <% if(locals.ISADMIN == true) { %>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/admin">Admin Panel</a>
+                <% } %> 
+              </div>
+            </li>    
+         <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link" href="/auth/login">Sign In<span class="sr-only">(current)</span></a>
+          </li>
+           <% } %>
+
         <li class="nav-item">
           <a class="nav-link disabled" href="#">Disabled</a>
         </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0" method="GET" action="/movies/search/">
+      <form class="form-inline my-2 my-lg-0" method="GET" action="/movies/">
         <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
     </div>
   </nav>  
+
+  <form id="logout-form" style="display:none" action="/auth/logout?_method=DELETE" method="POST"></form>
+
