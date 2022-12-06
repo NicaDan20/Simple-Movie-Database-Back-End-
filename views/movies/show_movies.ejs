@@ -90,9 +90,9 @@
 
 | <% if(currentSort) { %>
   <% if (currentSort === 'Number of Reviews_descending') { %>
-    <a href="#" onclick="addUrlParameter('sort', 'Release Date_ascending');">Number of Reviews ▼ </a> 
+    <a href="#" onclick="addUrlParameter('sort', 'Number of Reviews_ascending');">Number of Reviews ▼ </a> 
   <% } else if (currentSort === 'Number of Reviews_ascending') { %>
-    <a href="#" onclick="addUrlParameter('sort', 'Release Date_descending');">Number of Reviews ▲ </a> 
+    <a href="#" onclick="addUrlParameter('sort', 'Number of Reviews_descending');">Number of Reviews ▲ </a> 
   <% } else { %>
     <a href="#" onclick="addUrlParameter('sort', 'Number of Reviews_descending');">Number of Reviews </a> 
   <% } %> 
@@ -133,9 +133,25 @@
         </div>
           <% }) %>
 		
-      
+      <br>
 
+      <% if (pageList.length > 1) { %>
+        <% if (currentPage!=1) { %>
+          <a href="#" onclick="addUrlParameter('page', '<%= currentPage-1 %>');"> &lt; Previous</a>
+       <% } %>
+
+        <% for (i=0; i<pageList.length; i++) { %>
+          <a href="#" onclick="addUrlParameter('page', '<%= pageList[i] %>');"><%= pageList[i] %></a>
+       <% } %>
+
+       <% if (currentPage!=totalPages) { %>
+        <a href="#" onclick="addUrlParameter('page', '<%= currentPage+1 %>');">Next &gt; </a>
+      <% } %>
+
+      <% } %>
+      
 	</div>
+<br>
 <br>
 
 </div>

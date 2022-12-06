@@ -60,6 +60,10 @@ app.get('/', getLoggedUser, (req, res) => {
     res.render('index')
 })
 
+app.get('*', (req, res) => {
+    res.status(300).redirect('/')
+})
+
 app.listen({port: port}, async () => {
     console.log(`Live on port ${port}`)
     await sequelize.authenticate()

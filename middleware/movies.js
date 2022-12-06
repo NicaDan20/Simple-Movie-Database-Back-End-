@@ -1,11 +1,14 @@
 const {Movie, Director, MovieReviews, sequelize} = require('../models')
 const {Op, where} = require('sequelize')
 
+const itemsPerPage = 5
+
 async function getMovies(req, res, next) {
     try {
         let sortStatement = prepareSortStatement(req)
         let whereStatement = prepareWhereStatement(req)
         let searchStatement = prepareSearchStatement(req)
+        let page = parseInt(req.query.page) || 1
         const movies = await Movie.findAll({
             include: [{
                 association: 'director'
@@ -18,8 +21,12 @@ async function getMovies(req, res, next) {
             }],
             order: [sortStatement],
             where: [searchStatement],
+            limit: itemsPerPage,
+            offset: (page - 1) * itemsPerPage
         })
         req.movies = movies
+        let size = await Movie.count()
+        req.totalPages = Math.ceil(size/itemsPerPage)
     } catch (err) {
         console.log(err)
         res.json(err)

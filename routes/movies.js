@@ -8,12 +8,16 @@ const {Op} = require('sequelize')
 const {getMovies} = require('../middleware/movies')
 const { getLoggedUser } = require('../middleware/authenticated')
 const {checkAdmin} = require('../middleware/perms.js')
+const {generatePages} = require('../middleware/pagination.js')
 
 
-router.get('/', getMovies, getLoggedUser, async (req, res) => {
+router.get('/', getMovies, getLoggedUser, generatePages, async (req, res) => {
+    currentPage = parseInt(req.query.page)
+    totalPages = parseInt(req.totalPages)
     res.render('movies/show_movies', {
         movies: req.movies,
-        currentSort: req.currentSort
+        currentSort: req.currentSort,
+        pageList: req.pageList
     })
 })
 
