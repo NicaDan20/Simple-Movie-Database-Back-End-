@@ -51,13 +51,23 @@ function computeHashesFromString (seedArray) {
 // Date format: 2012-11-12 --> Dec 11 2012
 
 function prettyFormatDate (date) {
-    let dateToStr = date.toUTCString().split(' ')
-    let prettyDate = dateToStr[2] + ' ' + dateToStr[1] + ' ' + dateToStr[3]
-    return prettyDate
+    if (date) {
+        let dateToStr = date.toUTCString().split(' ')
+        let prettyDate = dateToStr[2] + ' ' + dateToStr[1] + ' ' + dateToStr[3]
+        return prettyDate    
+    } else {
+        return null
+    }
 }
 
-function calculateAge (birthday) {
-    return Math.floor(((Date.now() - new Date(birthday)) / (31557600000)))
+function calculateAge (birthday, date_of_death) {
+    console.log(date_of_death)
+    if (date_of_death) {
+        endingDate = new Date(date_of_death)
+    } else {
+        endingDate = Date.now()
+    }
+    return Math.floor(((endingDate - new Date(birthday)) / (31557600000)))
 }
 
 function createDirectorSlug (value, uuid) {

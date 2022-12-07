@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css" crossorigin="anonymous">
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md">
+                <h1 class="mb-3">Show Directors</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Username
+        </div>
+        <div class="col">
+            Email
+        </div>
+        <div class="col">
+            Status
+        </div>
+    </div>
+    <% users.forEach(user => { %>
+        <div class="row">
+            <div class="col">
+                <%= user.username %>
+            </div>
+            <div class="col">
+                <%= user.user_auths.email %>
+            </div>
+            <div class="col">
+                User ID: <%= user.id %>
+                <% if (user.user_auths.isBanned == false) { %>
+                    <form method="POST" action="/admin/banUser/<%= user.id %>">
+                        <button type="submit" class="btn btn-danger">Ban User</button>
+                    </form>    
+                <% } else { %>
+                    <form method="POST" action="/admin/banUser/<%= user.id %>">
+                        <button type="submit" class="btn btn-success">Unban User</button>
+                    </form>    
+                <% } %>
+            </div>
+        </div>
+        <% }) %>
+
+</body>

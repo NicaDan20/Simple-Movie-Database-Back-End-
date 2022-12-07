@@ -26,7 +26,7 @@ router.get('/:slug', getLoggedUser, checkAdmin, async (req, res) => {
             },
             include: 'movies'
         })
-        let directorAge = calculateAge(director.birth_date)
+        let directorAge = calculateAge(director.birth_date, director.date_of_death)
         res.render('movies/show_director', {
             director: director,
             directorAge: directorAge

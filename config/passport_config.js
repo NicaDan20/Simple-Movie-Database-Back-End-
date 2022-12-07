@@ -10,15 +10,19 @@ function init (passport) {
             if (loggingUser==null) {
                 return cb (null, false, { message: 'No user with that email'})
             }
-            try {
-                if (await bcrypt.compare(password, loggingUser.password)) {
-                    const loggedUser = await getLoggedUser(loggingUser.id)
-                    return cb(null, loggedUser)
-                } else {
-                    return cb(null, false, { message: 'Incorrect password '})
-                }
-            } catch(err) {
-                return cb(err, { message: "Something must have happened!"})
+            if (loggingUser.isBanned) {
+                return cb(null, false, {message: 'This account has been suspended.'})
+            } else {
+                try {
+                    if (await bcrypt.compare(password, loggingUser.password)) {
+                        const loggedUser = await getLoggedUser(loggingUser.id)
+                        return cb(null, loggedUser)
+                    } else {
+                        return cb(null, false, { message: 'Incorrect password '})
+                    }
+                } catch(err) {
+                    return cb(err, { message: "Something must have happened!"})
+                }    
             }
         }
     

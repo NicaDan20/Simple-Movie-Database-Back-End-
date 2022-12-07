@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
         return prettyFormatDate(date)
       }
     },
+    date_of_death: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+      defaultValue: null,
+    },
     bio: {
       type: DataTypes.TEXT,
       unique: true,

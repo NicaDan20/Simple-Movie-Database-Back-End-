@@ -4,7 +4,7 @@
 
 const express = require('express')
 const router = express()
-const {Movie, Director, UserProfile, Role, Permission, Role_Permissions} = require('../models')
+const {Movie, Director, UserProfile, Role, UserAuthentication} = require('../models')
 const imageUploadPath = require('../functions/path.js')
 const path = require ('path')
 const multer  = require('multer')
@@ -12,6 +12,7 @@ const fs = require('fs')
 const sharp = require('sharp')
 const { getLoggedUser } = require('../middleware/authenticated')
 const {checkPerms, checkAdmin} = require('../middleware/perms.js')
+const {Op} = require('sequelize')
 
   /*
     Define Storage and upload objects for the Multer middleware.
@@ -77,6 +78,43 @@ router.get('/showMovies', getLoggedUser, checkPerms("CAN ACCESS ADMIN PANEL"), c
     res.render('admin/showMovies', {
         movies: movies
     })
+})
+
+router.get('/showUsers', async (req, res) => {
+    try {
+        const users = await UserProfile.findAll({
+            include: {
+                association: "user_auths",
+                attributes: ["id", "email", "isBanned", "createdAt"]
+            },
+            where: {
+                [Op.not]: {
+                    username: "Admin"
+                }
+            }
+        })  
+        res.render('admin/showUsers', {
+            users: users
+        })  
+    } catch(err) {
+        res.json(err)
+    }
+})
+
+router.post('/banUser/:id', async (req, res) => {
+    try {
+        const {id} = req.params
+        let bannedUser = await UserAuthentication.findOne({
+            where: {
+                id: id
+            }
+        })
+        await bannedUser.update({ isBanned: !bannedUser.isBanned })
+        res.status(200).redirect('/admin/showUsers')
+    } catch (err) {
+        console.log(err)
+        res.json(err)
+    }
 })
 
 /*

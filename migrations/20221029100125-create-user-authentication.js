@@ -18,6 +18,11 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false
       },
+      isBanned: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        default: false
+      },
         createdAt: {
         allowNull: false,
         type: DataTypes.DATE

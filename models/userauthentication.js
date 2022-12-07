@@ -31,7 +31,12 @@ module.exports = (sequelize, DataTypes) => {
        let hash = bcrypt.hashSync(value, salt)
        this.setDataValue('password', hash)
       }
-    }
+    },       
+    isBanned: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      default: false
+    },
   }, {
     sequelize,
     tableName: 'user_authentications',
