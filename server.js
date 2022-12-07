@@ -18,6 +18,8 @@ app.set('view engine', 'ejs')
 app.set("views", path.join(__dirname, 'views'));
 
 const {getLoggedUser} = require('./middleware/authenticated')
+const {checkAdmin} = require('./middleware/perms.js')
+
 
 app.use(express.static(__dirname + '/public'))
 app.use('/movies', express.static(__dirname + '/public'))
@@ -56,7 +58,7 @@ app.use('/profile', profileRouter)
 
 console.log(`Live on Port ${port}`)
 
-app.get('/', getLoggedUser, (req, res) => {
+app.get('/', getLoggedUser, checkAdmin, (req, res) => {
     res.render('index')
 })
 

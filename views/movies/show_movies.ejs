@@ -17,9 +17,19 @@
 
 
 <div class="container mt-5">
-	<h2 class="text-center">Movie List</h2>
 
-  Sort by: 
+  <% if (genre) { %>
+    <% if (currentSort) { %>
+      <h2 class="text-center"><%= genre %> movies sorted by <%= currentSort.replace("_", " ") %> </h2>
+    <% } else { %>
+      <h2 class="text-center"><%= genre %> movies</h2>
+    <% } %>
+  <% } else if (currentSort) { %>
+    <h2 class="text-center">Movies sorted by <%= currentSort.replace("_", " ") %></h2>
+  <% } else { %>
+  <h2 class="text-center">Movie List</h2>
+  <% } %>
+
   
   <% if(currentSort) { %>
     <% if (currentSort === 'Runtime_descending') { %>
@@ -115,7 +125,7 @@
                 </div>
                 <div class="card-body">
                   <a href="/movies/title/<%= movie.slug %>"><h4 class="card-title"><%= movie.title %></h4></a>
-                  <span class="movie_info"> <p><small><%= movie.runtime %> minutes | <%= movie.genre %> | <%=movie.release_date %> | Add to Watchlist | Add to Favourites </small></p>
+                  <span class="movie_info"> <p><small><%= movie.runtime %> minutes | <a href="#" onclick="addUrlParameter('genre', '<%= movie.genre %>');"><%= movie.genre %></a> | <%=movie.release_date %> | Add to Watchlist | Add to Favourites </small></p>
                   <% if(movie.rating_count !== 0) { %>
                     <span class="movie_info"><i class="fas fa-star"></i> <%=movie.rating %> </span>
                     <% if(locals.CURRENT_USER) { %>

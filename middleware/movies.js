@@ -1,32 +1,42 @@
 const {Movie, Director, MovieReviews, sequelize} = require('../models')
 const {Op, where} = require('sequelize')
+const { search } = require('../routes/admin')
 
-const itemsPerPage = 5
+const itemsPerPage = 6
 
 async function getMovies(req, res, next) {
     try {
         let sortStatement = prepareSortStatement(req)
         let whereStatement = prepareWhereStatement(req)
         let searchStatement = prepareSearchStatement(req)
-        let page = parseInt(req.query.page) || 1
+
+        let size = await Movie.count({
+            where: [searchStatement],
+        })
+        req.totalPages = Math.ceil(size/itemsPerPage)
+        let page;
+        if (!req.query.page || req.query.page > req.totalPages) {
+            page = 1
+        } else {
+            page = parseInt(req.query.page)
+        }
+
         const movies = await Movie.findAll({
             include: [{
-                association: 'director'
+                association: 'director',
             }, {
                 association: 'movie_reviews',
                 required: false,
-                where: [whereStatement]
+                where: [whereStatement],
             }, {
-                association: 'users'
+                association: 'users',
             }],
             order: [sortStatement],
             where: [searchStatement],
             limit: itemsPerPage,
-            offset: (page - 1) * itemsPerPage
+            offset: (page - 1) * itemsPerPage,
         })
         req.movies = movies
-        let size = await Movie.count()
-        req.totalPages = Math.ceil(size/itemsPerPage)
     } catch (err) {
         console.log(err)
         res.json(err)
@@ -44,22 +54,25 @@ function prepareSearchStatement (req) {
         }
     }
     }
+    if (req.query.genre) {
+        console.log("=================================" + req.query.genre)
+        searchStatement = {
+            genre: `${req.query.genre}`
+        }
+    }
     return searchStatement
 }
 
 function prepareWhereStatement (req) {
     let whereStatement = {}
     if (req.user) {
-        whereStatement = {
-            "$movie_reviews.userId$": req.user.id
-        }
+        whereStatement["$movie_reviews.userId$"] = req.user.id
     }
     return whereStatement
 }
 
 function prepareSortStatement (req) {
         let sortStatement = ['id', 'ASC']
-        let whereStatement = {}
         if (req.query.sort) {
             let {sort} = req.query
             switch(sort) {

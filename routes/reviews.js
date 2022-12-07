@@ -8,7 +8,7 @@ const {checkNotAuthenticated} = require('../middleware/authenticated')
 const {getLoggedUser} = require('../middleware/authenticated.js')
 const {checkPerms, checkAdmin} = require('../middleware/perms.js')
 
-router.get('/:slug', checkReviewExists, getLoggedUser, async (req, res) => {
+router.get('/:slug', checkReviewExists, getLoggedUser, checkAdmin, async (req, res) => {
     res.clearCookie("_message", { httpOnly: true });
     const {slug} = req.params
     const reviews = await MovieReviews.findAll({
