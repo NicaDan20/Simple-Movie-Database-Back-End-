@@ -1,7 +1,5 @@
-const {Movie, Director, MovieReviews, sequelize} = require('../models')
-const {Op, where} = require('sequelize')
-const { search } = require('../routes/admin')
-
+const {Movie} = require('../models')
+const {Op} = require('sequelize')
 const itemsPerPage = 6
 
 async function getMovies(req, res, next) {
@@ -14,11 +12,10 @@ async function getMovies(req, res, next) {
             where: [searchStatement],
         })
         req.totalPages = Math.ceil(size/itemsPerPage)
-        let page;
         if (!req.query.page || req.query.page > req.totalPages) {
-            page = 1
+            req.page = 1
         } else {
-            page = parseInt(req.query.page)
+            req.page = parseInt(req.query.page)
         }
 
         const movies = await Movie.findAll({
@@ -34,12 +31,12 @@ async function getMovies(req, res, next) {
             order: [sortStatement],
             where: [searchStatement],
             limit: itemsPerPage,
-            offset: (page - 1) * itemsPerPage,
+            offset: (req.page - 1) * itemsPerPage,
         })
         req.movies = movies
     } catch (err) {
         console.log(err)
-        res.json(err)
+        res.status(400).redirect('back')
     }
     next()
 }

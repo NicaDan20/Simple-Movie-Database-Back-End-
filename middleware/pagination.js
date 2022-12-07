@@ -12,8 +12,8 @@ function generatePages (req, res, next) {
         }
     } else {
         let v = 1
-        let j = req.query.page-2 || 1
-        if (req.query.page > 3) {
+        let j = req.page-2 || 1
+        if (j > 3) {
             pageList.push(1) // the page list should always contain the first page
         }
         while (v <= 5 && j <= req.totalPages) {

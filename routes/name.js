@@ -5,9 +5,16 @@ const {Director} = require('../models')
 const {calculateAge} = require ('../functions/functions.js')
 const {getLoggedUser} = require('../middleware/authenticated.js')
 const {checkAdmin} = require('../middleware/perms.js')
+const {getDirectors} = require('../middleware/directors')
+const {generatePages} = require('../middleware/pagination')
 
-router.get('/', (req, res) => {
-    
+router.get('/', getDirectors, generatePages, getLoggedUser, checkAdmin,  (req, res) => {
+    currentPage = parseInt(req.page) || 1
+    totalPages = parseInt(req.totalPages)
+    res.render('movies/show_directors', {
+        directors: req.directors,
+        pageList: req.pageList
+    })
 })
 
 router.get('/:slug', getLoggedUser, checkAdmin, async (req, res) => {

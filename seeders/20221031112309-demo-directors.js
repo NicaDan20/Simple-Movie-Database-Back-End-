@@ -81,7 +81,7 @@ module.exports = {
       uuid: "aeb91b81-0666-49f5-bfa0-61e6634bba9a",
       name: 'Andrei Tarkowsky',
       birth_date: '04-04-1932',
-      path_to_image: 'images/uploads/directors/andrei-tarkwosky.jpg',
+      path_to_image: 'images/uploads/directors/andrei-tarkowsky.jpeg',
       slug: 'andrei-tarkowski-1987',
       bio: "Andrei Arsenyevich Tarkovsky (4 April 1932 – 29 December 1986) was a Soviet filmmaker. Widely considered one of the greatest and most influential filmmakers of all time, his films explore spiritual and metaphysical themes, and are noted for their slow pacing and long takes, dreamlike visual imagery, and preoccupation with nature and memory. In 1990, he was posthumously awarded the Soviet Union's prestigious Lenin Prize. Three of his films—Andrei Rublev, Mirror, and Stalker—featured in Sight & Sound's 2012 poll of the 100 greatest films of all time.",
       createdAt: new Date(),

@@ -12,7 +12,7 @@ const {generatePages} = require('../middleware/pagination.js')
 
 
 router.get('/', getMovies, getLoggedUser, generatePages, checkAdmin, async (req, res) => {
-    currentPage = parseInt(req.query.page) || 1
+    currentPage = parseInt(req.page) || 1
     totalPages = parseInt(req.totalPages)
     genre = req.query.genre
     res.render('movies/show_movies', {
